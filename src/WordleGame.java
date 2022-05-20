@@ -114,6 +114,10 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 		gameFrame.add(userPanel);
 		gameFrame.revalidate();
 		
+		List<String> arr = readWordsFile("Words.txt");
+		
+		wordleString = getRandomWord(arr);
+		System.out.println(wordleString);
 		
 		
 		
