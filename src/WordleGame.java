@@ -4,13 +4,24 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
+import java.util.Timer;
 
 import javax.crypto.BadPaddingException;
-//import java.lang.WeakPairMap.Pair.Weak;
+
 import javax.print.attribute.standard.JobMessageFromOperator;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -84,11 +95,42 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 		
 	}
 	
+	class showTime extends JPanel{
+		
+		
+		public showTime() {
+		this.setLayout(new GridLayout(1, 1));
+		ZonedDateTime now = ZonedDateTime.now();
+		ZoneId z = ZoneId.of( "Europe/Istanbul" );
+		ZonedDateTime zdt = ZonedDateTime.now( z );
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy - HH:mm:ss Z");
+		String formattedString = now.format(formatter);
+		
+		JLabel heading  = new JLabel(formattedString);
+		heading.setFont(new Font("Serif", Font.BOLD, 21));
+		heading.setForeground(Color.pink.darker());
+		
+		this.add(heading);
+		}
+		
+		
+	}
+	
+	
+	
+	
+	
+	
 	public JFrame gameFrame;
 	public WordPanel[] wordPanelArray = new WordPanel[6]; // creating 6 wordPanels because user has 6 tries
 	public UserPanel userPanel;
 	public String wordleString;
+	public showTime time;
 	public int count = 0;
+	
+	
+	
+	
 	
 	
 	public WordleGame() { // constructor, initializing
@@ -96,9 +138,14 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 		gameFrame = new JFrame("Wordle Game BAU Ver");
 		gameFrame.setSize(300, 300);
 		gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		gameFrame.setLayout(new GridLayout(7, 1)); // 6 for tries, 1 for userinput
+		gameFrame.setLayout(new GridLayout(8, 1)); // 6 for tries, 1 for userinput
 		gameFrame.setVisible(true);
 		gameFrame.setLocationRelativeTo(null); //puts it in the center of our system
+		
+		
+		time = new showTime();
+		
+		gameFrame.add(time);
 		
 		
 		for (int i = 0; i < 6; i++) {  //initializng the wordpanel array
@@ -110,66 +157,107 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 		userPanel = new UserPanel(); //initializing the userpanel
 		userPanel.getEnterButton().addActionListener(this);
 		
-		
 		gameFrame.add(userPanel);
+		
+		
 		gameFrame.revalidate();
 		
-		List<String> arr = readWordsFile("Words.txt");
+		wordleString = getWordleString();
+		System.out.println("Word for the day : " + wordleString);
 		
-		wordleString = getRandomWord(arr);
-		System.out.println(wordleString);
 		
 		
 		
 	 }
 
 
+	public String obtainValidUserWord (List<String> wordList) {
+        Scanner myScanner = new Scanner(System.in);  // Create a Scanner object
+        String userWord = myScanner.nextLine();  // Read user input
+        userWord = userWord.toLowerCase(); // covert to lowercase
+
+        // check the length of the word and if it exists
+        while ((userWord.length() != 5) || !(wordList.contains(userWord))) {
+            if ((userWord.length() != 5)) {
+                System.out.println("The word " + userWord + " does not have 5 letters.");
+            } else {
+                System.out.println("The word " + userWord + " is not in the word list.");
+            }
+            // Ask for a new word
+            System.out.println("Please, submit a new 5-letter word.");
+            
+            userWord = myScanner.nextLine();
+        }
+        return userWord;
+    }
+	
+	
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		String action = e.getActionCommand();
-		if("Enter".equals(action)) {
-			System.out.println(this.userPanel.getUserInput().getText());
-			
-		}
+		
+		
+		String userWord = this.userPanel.getUserInput().getText();
+
+		if (userWord.length() > 4) {
+			 isWordleWordEqualTo(userWord.trim().toUpperCase());
+			 
+			}
+		
+		count++;	
+		
 	}
 	
-	public List<String> readWordsFile(String fileName){
-   	 
-   	 ArrayList<String> arr = new ArrayList<String>();
-        try (BufferedReader br = new BufferedReader(new FileReader("Words.txt")))
-        {
-
-            String sCurrentLine;
-
-            while ((sCurrentLine = br.readLine()) != null) {
-                arr.add(sCurrentLine);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
-        
-        return arr;
-
-    
-    }
-    
-    // get a random word from the dictionary arraylist
-    public String getRandomWord(List<String> arr) {
-        Random rand = new Random(); //instance of random class
-        int upperbound = arr.size();
-        //generate random values from 0 to arrayList size
-        int int_random = rand.nextInt(upperbound);
-        return arr.get(int_random);
-    }
-    
 	
-	   
+	
+	public WordPanel getActivePanel() {
+		return this.wordPanelArray[count];
+	}
 
 	
+	public String getWordleString() {
+		Path path = Paths.get("C:\\Users\\LENOVO\\eclipse-workspace\\WordleBAU\\Words.txt");
+
+		
+		List<String> wordList = new ArrayList<>();
+		try {
+			wordList = Files.readAllLines(path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Random random = new Random();
+		int position = random.nextInt(wordList.size());
+		return wordList.get(position).trim().toUpperCase();
+	}
+    
+
+	private boolean isWordleWordEqualTo(String userWord) {
+		List<String> wordleWordsList = Arrays.asList(wordleString.split(""));
+		String[] userWordsArray = userWord.split("");
+		List<Boolean> wordMatchesList = new ArrayList<>();
+
+		for (int i = 0; i < 5; i++) {
+			if (wordleWordsList.contains(userWordsArray[i])) {
+				if (wordleWordsList.get(i).equals(userWordsArray[i])) {
+					getActivePanel().setPanelText(userWordsArray[i], i, Color.GREEN);
+					wordMatchesList.add(true);
+				} else {
+					getActivePanel().setPanelText(userWordsArray[i], i, Color.YELLOW);
+					wordMatchesList.add(false);
+				}
+			} else {
+				getActivePanel().setPanelText(userWordsArray[i], i, Color.GRAY);
+				wordMatchesList.add(false);
+			}
+		}
+		return !wordMatchesList.contains(false);
+	}
+
+
+    
+    
+    
+   
 }
-
-
-	
-	
