@@ -139,28 +139,6 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 	
 	
 	
-	public String obtainValidUserWord (List<String> wordList) {
-        Scanner myScanner = new Scanner(System.in);  // Create a Scanner object
-        String userWord = myScanner.nextLine();  // Read user input
-        userWord = userWord.toLowerCase(); // covert to lowercase
-
-        // check the length of the word and if it exists
-        while ((userWord.length() != 5) || !(wordList.contains(userWord))) {
-            if ((userWord.length() != 5)) {
-                System.out.println("The word " + userWord + " does not have 5 letters.");
-            } else {
-                System.out.println("The word " + userWord + " is not in the word list.");
-            }
-            // Ask for a new word
-            System.out.println("Please, submit a new 5-letter word.");
-            
-            userWord = myScanner.nextLine();
-        }
-        return userWord;
-    }
-	
-	
-	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
