@@ -2,8 +2,12 @@ import java.awt.GridLayout;
 
 import javax.swing.JFrame;
 
-public class GameFrame extends WordleGame {
 
+
+public class GameFrame extends WordleGame {
+	
+
+	
 	
 	
 public GameFrame() { // constructor, initializing
@@ -18,19 +22,21 @@ public GameFrame() { // constructor, initializing
 	gameFrame.add(time);
 	
 	
-	for (int i = 0; i < 6; i++) {  //initializng the wordpanel array
-		wordPanelArray[i] = new WordPanel();
+	for (int i = 0; i < 5; i++) {  //initializng the wordpanel array
+		wordPanelArray[i] = new Harfler();
 		gameFrame.add(wordPanelArray[i]);
 	}
 	
 	
-	userPanel = new UserPanel(); //initializing the userpanel
+	userPanel = new UserInput(); //initializing the userpanel
 	userPanel.getEnterButton().addActionListener(this);
 	
+
+	
 	gameFrame.add(userPanel);
-	gameFrame.setSize(300, 300);
+	gameFrame.setSize(470, 470);
 	gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	gameFrame.setLayout(new GridLayout(8, 1)); // 6 for tries, 1 for userinput
+	gameFrame.setLayout(new GridLayout(7, 1)); // 6 for tries, 1 for userinput
 	gameFrame.setVisible(true);
 	gameFrame.setLocationRelativeTo(null); //puts it in the center of our system
 	
