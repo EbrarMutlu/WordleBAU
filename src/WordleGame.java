@@ -4,8 +4,11 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -162,6 +165,7 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 			        String s = Integer.toString(tries);
 			        
 					JOptionPane.showMessageDialog(gameFrame, "CONGRATS! WANT TO PLAY AGAIN?", "YOU WIN!", JOptionPane.INFORMATION_MESSAGE,icon);
+					HighScores();
 					gameFrame.dispose();
 					//f.dispose();
 					return;
@@ -242,11 +246,35 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 		}
 		tries++;
 		
+		
+		
+	}
+	
+	public void HighScores() {
+	
+	try {   // this is for monitoring runtime Exception within the block 
+		File file = new  File("HighScores.txt");
+		String textString = Integer.toString(tries);
+    
+    // if file doesnt exists, then create it
+    if (!file.exists()) {   // checks whether the file is Exist or not
+        file.createNewFile();   // here if file not exist new file created 
+    }
+
+    FileWriter fw = new FileWriter(file.getAbsoluteFile(), true); // creating fileWriter object with the file
+    BufferedWriter bw = new BufferedWriter(fw); // creating bufferWriter which is used to write the content into the file
+    bw.write(textString+ "\r\n");
+    
+    // write method is used to write the given content into the file
+    bw.close(); // Closes the stream, flushing it first. Once the stream has been closed, further write() or flush() invocations will cause an IOException to be thrown. Closing a previously closed stream has no effect. 
+
+
+	} catch (IOException e) { // if any exception occurs it will catch
+    e.printStackTrace();
 	}
 
-
+	
     
-    
-    
+	}  
    
 }
