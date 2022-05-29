@@ -135,6 +135,7 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 	public showTime time;
 	public int count = 0;
 	public int CorrectLetterCount = 0;
+	int tries = 0;
 	
 	
 	
@@ -157,7 +158,10 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 			       
 			        ImageIcon icon2 = new ImageIcon("congrats.png");
 			        
-					JOptionPane.showMessageDialog(gameFrame, "Congratulations! Want to play again?", "You have won!", JOptionPane.INFORMATION_MESSAGE,icon);
+			        System.out.println(tries);
+			        String s = Integer.toString(tries);
+			        
+					JOptionPane.showMessageDialog(gameFrame, "CONGRATS! WANT TO PLAY AGAIN?", "YOU WIN!", JOptionPane.INFORMATION_MESSAGE,icon);
 					gameFrame.dispose();
 					//f.dispose();
 					return;
@@ -211,27 +215,32 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
     
 
 	private void playWordle(String userWord) {
+		
 		List<String> wordleWordsList = Arrays.asList(wordleString.split(""));
-		String[] userWordsArray = userWord.split("");
+		List<String> userWordsList = Arrays.asList(userWord.split(""));
 		
 
 		for (int i = 0; i < 5; i++) {
-			if (wordleWordsList.contains(userWordsArray[i])) {
-				if (wordleWordsList.get(i).equals(userWordsArray[i])) {
+			if (wordleWordsList.contains(userWordsList.get(i))) {
+				if (wordleWordsList.get(i).equals(userWordsList.get(i))) {
 					
 					
-					getActivePanel().setText(userWordsArray[i], i, Color.GREEN);
+				 getActivePanel().setText(userWordsList.get(i), i, Color.green);
+					
+				
+					
 					
 					CorrectLetterCount++;
 				} else {
-					getActivePanel().setText(userWordsArray[i], i, Color.YELLOW);
+					getActivePanel().setText(userWordsList.get(i), i, Color.yellow);
 					
 				}
 			} else {
-				getActivePanel().setText(userWordsArray[i], i, Color.GRAY);
+				getActivePanel().setText(userWordsList.get(i), i,Color.gray);
 				
 			}
 		}
+		tries++;
 		
 	}
 
