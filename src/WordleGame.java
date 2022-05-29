@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.PublicKey;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +25,8 @@ import javax.crypto.BadPaddingException;
 
 import javax.print.attribute.standard.JobMessageFromOperator;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -36,22 +39,22 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 	
 	
 	
-	class WordPanel extends JPanel{ //creating the 5 boxes view
+	class Harfler extends JPanel{ //creating the 5 boxes view
 		
-		JLabel Wordcolumns[]= new JLabel[5];
+		JLabel harfler[]= new JLabel[5];
 	
 		
-		public WordPanel() //constructor 
+		public Harfler() //constructor 
 		{
 			this.setLayout(new GridLayout(1,5));
 			
 			Border blackBorder = BorderFactory.createLineBorder(Color.gray,1);
 			
 			for(int i = 0; i<5; i++) {
-				Wordcolumns[i]= new JLabel();
-				Wordcolumns[i].setOpaque(true);
-				Wordcolumns[i].setBorder(blackBorder);
-				this.add(Wordcolumns[i]); //adding 5 little boxes to the same row
+				harfler[i]= new JLabel();
+				harfler[i].setOpaque(true);
+				harfler[i].setBorder(blackBorder);
+				this.add(harfler[i]); //adding 5 little boxes to the same row
 				
 			}
 		
@@ -60,23 +63,23 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 		
 		public void clearWordPanel() {
 			for (int i = 0; i < 5; i++) {
-				Wordcolumns[i].setText("");
+				harfler[i].setText("");
 			}
 		}
 		
-		public void setPanelText(String charValue, int position, Color color) {
-			this.Wordcolumns[position].setText(charValue);
-			this.Wordcolumns[position].setBackground(color);
+		public void setText(String charValue, int position, Color color) {
+			this.harfler[position].setText(charValue);
+			this.harfler[position].setBackground(color);
 			//setting the opaque=true helps us see the color
 		}
 	}
 	
-	class UserPanel extends JPanel{ //getting the user input 
+	class UserInput extends JPanel{ //getting the user input 
 		
 		public JTextField userInput;
 		public JButton enterButton;
 
-		public UserPanel() {
+		public UserInput() {
 			this.setLayout(new GridLayout(1, 2));
 			userInput = new JTextField();
 			userInput.setBackground(Color.decode("#717bff"));
@@ -122,14 +125,12 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 		
 	}
 	
-	
-	
-	
-	
+    
+	     	
 	
 	public JFrame gameFrame;
-	public WordPanel[] wordPanelArray = new WordPanel[6]; // creating 6 wordPanels because user has 6 tries
-	public UserPanel userPanel;
+	public Harfler[] wordPanelArray = new Harfler[6]; // creating 6 wordPanels because user has 6 tries
+	public UserInput userPanel;
 	public String wordleString;
 	public showTime time;
 	public int count = 0;
@@ -146,11 +147,19 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 		String userWord = this.userPanel.getUserInput().getText();
 
 		if (userWord.length() == 5) {
-			 isWordleWordEqualTo(userWord.trim().toUpperCase());
+			 playWordle(userWord.trim().toUpperCase());
 			 if(CorrectLetterCount>4) {
 				 clearAllPanels();
-					JOptionPane.showMessageDialog(null, "EXCELLENT!!!", "!", JOptionPane.INFORMATION_MESSAGE);
+				    
+				    Icon icon = new ImageIcon("fireworks.gif");
+			       
+			        JLabel label = new JLabel(icon);
+			       
+			        ImageIcon icon2 = new ImageIcon("congrats.png");
+			        
+					JOptionPane.showMessageDialog(gameFrame, "Congratulations! Want to play again?", "You have won!", JOptionPane.INFORMATION_MESSAGE,icon);
 					gameFrame.dispose();
+					//f.dispose();
 					return;
 			 }
 			 count++;
@@ -179,7 +188,7 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 	}
 	
 	
-	public WordPanel getActivePanel() {
+	public Harfler getActivePanel() {
 		return this.wordPanelArray[count];
 	}
 
@@ -201,27 +210,29 @@ public class WordleGame implements ActionListener{ //implementing the actionlist
 	}
     
 
-	private boolean isWordleWordEqualTo(String userWord) {
+	private void playWordle(String userWord) {
 		List<String> wordleWordsList = Arrays.asList(wordleString.split(""));
 		String[] userWordsArray = userWord.split("");
-		List<Boolean> wordMatchesList = new ArrayList<>();
+		
 
 		for (int i = 0; i < 5; i++) {
 			if (wordleWordsList.contains(userWordsArray[i])) {
 				if (wordleWordsList.get(i).equals(userWordsArray[i])) {
-					getActivePanel().setPanelText(userWordsArray[i], i, Color.GREEN);
-					wordMatchesList.add(true);
+					
+					
+					getActivePanel().setText(userWordsArray[i], i, Color.GREEN);
+					
 					CorrectLetterCount++;
 				} else {
-					getActivePanel().setPanelText(userWordsArray[i], i, Color.YELLOW);
-					wordMatchesList.add(false);
+					getActivePanel().setText(userWordsArray[i], i, Color.YELLOW);
+					
 				}
 			} else {
-				getActivePanel().setPanelText(userWordsArray[i], i, Color.GRAY);
-				wordMatchesList.add(false);
+				getActivePanel().setText(userWordsArray[i], i, Color.GRAY);
+				
 			}
 		}
-		return !wordMatchesList.contains(false);
+		
 	}
 
 
