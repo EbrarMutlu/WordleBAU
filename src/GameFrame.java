@@ -14,7 +14,7 @@ public GameFrame() { // constructor, initializing
 	
 	gameFrame = new JFrame("Wordle Game BAU Ver");
 	
-	gameFrame.setResizable(false);
+	//gameFrame.setResizable(false);
 	gameFrame.pack();
 	
 	time = new showTime();
@@ -26,19 +26,22 @@ public GameFrame() { // constructor, initializing
 		wordPanelArray[i] = new Harfler();
 		gameFrame.add(wordPanelArray[i]);
 	}
-	
-	
+	board = new keyboard();
+	gameFrame.add(board);
 	userPanel = new UserInput(); //initializing the userpanel
 	userPanel.getEnterButton().addActionListener(this);
 	
 
 	
 	gameFrame.add(userPanel);
-	gameFrame.setSize(470, 470);
+	
+	
+	gameFrame.setSize(670, 670);
 	gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	gameFrame.setLayout(new GridLayout(7, 1)); // 6 for tries, 1 for userinput
+	gameFrame.setLayout(new GridLayout(8, 1)); // 6 for tries, 1 for userinput
 	gameFrame.setVisible(true);
 	gameFrame.setLocationRelativeTo(null); //puts it in the center of our system
+	
 	
 	
 	gameFrame.revalidate();
